@@ -4,10 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
+using System;
 
-public class BattleScript : MonoBehaviour
+public class BattleScript : MonoBehaviourPun
 {
     public Spinner spinnerScript;
+    public GameObject UI_3D_GameObject;
+    public GameObject deathPanelUIPrefab;
+    private GameObject deathPanelUIGameObject;
+
+    private Rigidbody rb;
+
 
     private float startSpinSpeed;
     private float currentSpinSpeed;
@@ -18,6 +25,7 @@ public class BattleScript : MonoBehaviour
 
     public bool isAttacker;
     public bool isDefender;
+    private bool isDead = false;
 
     [Header("Player Type Damage Coefficients")]
     public float doDamage_Coefficient_Attacker = 10f;
@@ -94,27 +102,119 @@ public class BattleScript : MonoBehaviour
     [PunRPC]
     public void DoDamage(float _damageAmount)
     {
-        if (isAttacker)         // this verification is on the remote player, who gets attacked
+        if(!isDead)
         {
-            _damageAmount *= getDamaged_Coeeffiecient_Attacker;
+            if (isAttacker)         // this verification is on the remote player, who gets attacked
+            {
+                _damageAmount *= getDamaged_Coeeffiecient_Attacker;
+            }
+
+            else if (isDefender)
+            {
+                _damageAmount *= getDamaged_Coeeffiecient_Defender;
+            }
+
+            spinnerScript.spinSpeed -= _damageAmount;
+            currentSpinSpeed = spinnerScript.spinSpeed;
+
+            spinSpeedBar_Image.fillAmount = currentSpinSpeed / startSpinSpeed;
+            spinSpeedRatio_Text.text = currentSpinSpeed.ToString("F0") + "/" + startSpinSpeed; // ToString("F0") rounds the value to integers
+
+
+            if (currentSpinSpeed < 100)
+            {
+                // Die
+                Die();
+            }
         }
 
-        else if (isDefender)
+        
+        
+    }
+
+    private void Die()
+    {
+        isDead = true;
+
+        GetComponent<MovementController>().enabled = false;
+        rb.freezeRotation = false;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        spinnerScript.spinSpeed = 0f;
+        UI_3D_GameObject.SetActive(false);
+
+        if(photonView.IsMine)
         {
-            _damageAmount *= getDamaged_Coeeffiecient_Defender;
+            //Countdown for Respawn
+            StartCoroutine(ReSpwan());
         }
 
-        spinnerScript.spinSpeed -= _damageAmount;
+
+
+    }
+
+    IEnumerator ReSpwan()
+    {
+        GameObject canvasGameObject = GameObject.Find("Canvas");
+
+        if (deathPanelUIGameObject == null)
+        {
+            deathPanelUIGameObject = Instantiate(deathPanelUIPrefab, canvasGameObject.transform);
+        }
+
+        else
+        {
+            deathPanelUIGameObject.SetActive(true);
+        }
+
+        Text respawnTimeText = deathPanelUIGameObject.transform.Find("RespawnTimeText").GetComponent<Text>();
+
+        float respawnTime = 8.0f;
+
+        respawnTimeText.text = respawnTime.ToString(".00");
+
+        while(respawnTime > 0.0f)
+        {
+            yield return new WaitForSeconds(1.0f);
+            respawnTime -= 1.0f;
+            respawnTimeText.text = respawnTime.ToString(".00");
+
+            GetComponent<MovementController>().enabled = false;
+
+        }
+
+        deathPanelUIGameObject.SetActive(false);
+
+        GetComponent<MovementController>().enabled = true;
+
+        photonView.RPC("Reborn", RpcTarget.AllBuffered);
+
+    }
+
+    [PunRPC]
+    public void ReBorn()
+    {
+        isDead = false;
+        spinnerScript.spinSpeed = startSpinSpeed;
         currentSpinSpeed = spinnerScript.spinSpeed;
 
         spinSpeedBar_Image.fillAmount = currentSpinSpeed / startSpinSpeed;
-        spinSpeedRatio_Text.text = currentSpinSpeed.ToString("F0") + "/" + startSpinSpeed; // ToString("F0") rounds the value to integers
+        spinSpeedRatio_Text.text = currentSpinSpeed + "/" + startSpinSpeed; // ToString("F0") rounds the value to integers
 
+        rb.freezeRotation = true;
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+
+        UI_3D_GameObject.SetActive(true);
     }
+
+
     // Start is called before the first frame update
     void Start()
     {
         CheckPlayerType();
+        rb = GetComponent<Rigidbody>();
+
     }
 
     // Update is called once per frame

@@ -88,7 +88,8 @@ public class SpinningTopGameManager : MonoBehaviourPunCallbacks     // To use Ph
     IEnumerator DeactivateAfterSeconds(GameObject _gameObject, float _seconds)
     {
         yield return new WaitForSeconds(_seconds);
-        gameObject.SetActive(false);
+        _gameObject.SetActive(false);
+
     }
 
 }

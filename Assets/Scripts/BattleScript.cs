@@ -107,6 +107,11 @@ public class BattleScript : MonoBehaviourPun
             if (isAttacker)         // this verification is on the remote player, who gets attacked
             {
                 _damageAmount *= getDamaged_Coeeffiecient_Attacker;
+
+                if(_damageAmount > 1000)
+                {
+                    _damageAmount = 400f;
+                }
             }
 
             else if (isDefender)

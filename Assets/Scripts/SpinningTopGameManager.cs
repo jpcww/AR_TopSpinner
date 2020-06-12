@@ -36,6 +36,19 @@ public class SpinningTopGameManager : MonoBehaviourPunCallbacks     // To use Ph
         searchForGameButtonGameObject.SetActive(false);
     }
 
+    public void onQuickMatchbuttonClicked()
+    {
+        if(PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+        else
+        {
+            SceneLoader.Instance.LoadScene("Scene_Lobby");
+        }
+    }
+
+
     public override void OnJoinedRoom()         // this method is called when the current user enter the room
     {
         if (PhotonNetwork.CurrentRoom.PlayerCount == 1) // when the current user creates the room, the player count starts with 1
@@ -70,6 +83,12 @@ public class SpinningTopGameManager : MonoBehaviourPunCallbacks     // To use Ph
         UI_InformText.text = message;
         CreateAndJoinRoom();
     }
+
+    public override void OnLeftRoom()
+    {
+        SceneLoader.Instance.LoadScene("Scene_Lobby");
+    }
+
     #endregion
 
     #region Private Methods

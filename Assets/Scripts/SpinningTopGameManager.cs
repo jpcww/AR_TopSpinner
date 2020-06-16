@@ -18,7 +18,7 @@ public class SpinningTopGameManager : MonoBehaviourPunCallbacks     // To use Ph
     void Start()
     {
         UI_InformPanelGameObject.SetActive(true);
-        UI_InformText.text = "Search for Games to battle";      // As soon as "Scene_Gameplay" is loaded this Text UI will be displayed
+        
     }
 
     // Update is called once per frame

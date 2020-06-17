@@ -27,7 +27,7 @@ public class ScaleControl : MonoBehaviour
     {
         if(scaleSlider != null)
         {
-            m_ARSessionOrigin.transform.localScale = Vector3.one * value;
+            m_ARSessionOrigin.transform.localScale = Vector3.one / value;
         }
     }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using TMPro;
 
 public class ARPlacementAndPlaneDetectionController : MonoBehaviour
 {
@@ -15,6 +14,8 @@ public class ARPlacementAndPlaneDetectionController : MonoBehaviour
     public GameObject searchForGameButton;
     public TextMeshProUGUI informUIPanel_Text;
 
+    public GameObject scaleSlider;
+
     private void Awake()
     {
         m_ARPlaneManager = GetComponent<ARPlaneManager>();
@@ -24,8 +25,10 @@ public class ARPlacementAndPlaneDetectionController : MonoBehaviour
     void Start()
     {
         placeButton.SetActive(true);
+        scaleSlider.SetActive(true);
         adjustButton.SetActive(false);
         searchForGameButton.SetActive(false);
+
 
         informUIPanel_Text.text = "Move phone to detect planes and place the Battle Arena";
     }
@@ -41,6 +44,8 @@ public class ARPlacementAndPlaneDetectionController : MonoBehaviour
         m_ARPlaneManager.enabled = false;
         m_ARPlacementManager.enabled = false;
 
+        scaleSlider.SetActive(false);
+
         SetAllPlaneActiveOrDeactive(false);
         placeButton.SetActive(false);
         adjustButton.SetActive(true);
@@ -53,6 +58,8 @@ public class ARPlacementAndPlaneDetectionController : MonoBehaviour
     {
         m_ARPlaneManager.enabled = true;
         m_ARPlacementManager.enabled = true;
+
+        scaleSlider.SetActive(true);
 
         SetAllPlaneActiveOrDeactive(true);
         placeButton.SetActive(true);

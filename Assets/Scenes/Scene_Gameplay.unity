@@ -1467,6 +1467,7 @@ MonoBehaviour:
   adjustButton: {fileID: 905712417}
   searchForGameButton: {fileID: 623289035}
   informUIPanel_Text: {fileID: 243443568}
+  scaleSlider: {fileID: 772496525}
 --- !u!114 &721261990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1540,9 +1541,9 @@ MonoBehaviour:
   m_FillRect: {fileID: 869690904}
   m_HandleRect: {fileID: 443112035}
   m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 5
-  m_WholeNumbers: 1
+  m_MinValue: 0.2
+  m_MaxValue: 2
+  m_WholeNumbers: 0
   m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2500,6 +2501,7 @@ MonoBehaviour:
   - {fileID: 931434789}
   - {fileID: 2043065518}
   - {fileID: 1650174349}
+  battleArenaGameObject: {fileID: 0}
 --- !u!4 &1367680782
 Transform:
   m_ObjectHideFlags: 0
